@@ -47,7 +47,7 @@ public sealed class BlogsController : ControllerBase
 
     // PUT: api/Blogs/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
+    [HttpPut]
     public async Task<IActionResult> PutBlog(BlogVM blog)
     {
         var blogInDb = await _context.Blogs.FindAsync(blog.ID);
@@ -99,20 +99,8 @@ public sealed class BlogsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBlog(int id)
     {
-        if (_context.Blogs == null)
-        {
-            return NotFound();
-        }
-        var blog = await _context.Blogs.FindAsync(id);
-        if (blog == null)
-        {
-            return NotFound();
-        }
-
-        _context.Blogs.Remove(blog);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        var countAffected = await _context.Blogs.Where(x => x.ID == id).ExecuteDeleteAsync();
+        return countAffected == 1 ? NoContent() : BadRequest();
     }
 
     private bool BlogExists(int id)

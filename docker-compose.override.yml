@@ -29,6 +29,8 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=admin1234
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+      - PGADMIN_CONFIG_SERVER_MODE=False
     restart: always
     depends_on: 
       - postgresdb

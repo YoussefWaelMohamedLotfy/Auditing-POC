@@ -7,7 +7,7 @@ namespace Auditing_POC.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BlogsController : ControllerBase
+public sealed class BlogsController : ControllerBase
 {
     private readonly AppDbContext _context;
 
@@ -48,14 +48,18 @@ public class BlogsController : ControllerBase
     // PUT: api/Blogs/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutBlog(int id, Blog blog)
+    public async Task<IActionResult> PutBlog(BlogVM blog)
     {
-        if (id != blog.ID)
+        var blogInDb = await _context.Blogs.FindAsync(blog.ID);
+
+        if (blogInDb is null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
-        _context.Update(blog);
+        blogInDb.Title = blog.Title;
+        blogInDb.Text = blog.Text;
+        _context.Update(blogInDb);
 
         try
         {
@@ -63,7 +67,7 @@ public class BlogsController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!BlogExists(id))
+            if (!BlogExists(blog.ID))
             {
                 return NotFound();
             }

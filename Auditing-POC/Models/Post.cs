@@ -1,6 +1,6 @@
 ﻿namespace Auditing_POC.Models;
 
-public class Post
+public sealed class Post
 {
     public int ID { get; set; }
 

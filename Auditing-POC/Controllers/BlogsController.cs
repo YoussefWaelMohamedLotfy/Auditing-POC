@@ -87,7 +87,7 @@ public sealed class BlogsController : ControllerBase
     {
         if (_context.Blogs == null)
         {
-            return Problem("Entity set 'AppDbContext.Blogs'  is null.");
+            return Problem("Entity set 'AppDbContext.Blogs' is null.");
         }
         _context.Blogs.Add(blog);
         await _context.SaveChangesAsync();
@@ -99,8 +99,20 @@ public sealed class BlogsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBlog(int id)
     {
-        var countAffected = await _context.Blogs.Where(x => x.ID == id).ExecuteDeleteAsync();
-        return countAffected == 1 ? NoContent() : BadRequest();
+        if (_context.Blogs == null)
+        {
+            return NotFound();
+        }
+        var blog = await _context.Blogs.FindAsync(id);
+        if (blog == null)
+        {
+            return NotFound();
+        }
+
+        _context.Blogs.Remove(blog);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 
     private bool BlogExists(int id)

@@ -10,10 +10,12 @@ namespace Auditing_POC.Controllers;
 public sealed class BlogsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<BlogsController> _logger;
 
-    public BlogsController(AppDbContext context)
+    public BlogsController(AppDbContext context, ILogger<BlogsController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     // GET: api/Blogs
@@ -92,6 +94,7 @@ public sealed class BlogsController : ControllerBase
         _context.Blogs.Add(blog);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Added new Post with blog id {blogId}", blog.ID);
         return CreatedAtAction("GetBlog", new { id = blog.ID }, blog);
     }
 
@@ -112,6 +115,7 @@ public sealed class BlogsController : ControllerBase
         _context.Blogs.Remove(blog);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Deleted Post with blog id {blogId}", blog.ID);
         return NoContent();
     }
 
